@@ -27,7 +27,7 @@
                     <?php $rowNum = $rangeStart; ?>
                     <?php foreach ($recordsData as $row): ?>
                         <?php $tipo = strtoupper(trim($row['TipoDetalle'] ?? '')); ?>
-                        <tr class="<?php echo $tipo === 'FACTURA' ? 'row-factura' : 'row-cuenta'; ?>">
+                        <tr class="<?php echo str_starts_with($tipo, 'FACTURA') ? 'row-factura' : 'row-cuenta'; ?>">
                             <td class="text-secondary text-center"><?php echo $rowNum++; ?></td>
                             <td class="text-center text-nowrap"><?php echo formatDate($row['DocDate'] ?? null); ?></td>
                             <td class="text-center"><?php echo html($row['CommentsPago'] ?? ''); ?></td>

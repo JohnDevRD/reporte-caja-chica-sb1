@@ -293,7 +293,7 @@ if ($errorMsg) {
     $pageSum = 0.0;
     foreach ($records as $row) {
         $tipo = strtoupper(trim($row['TipoDetalle'] ?? ''));
-        $rowClass = $tipo === 'FACTURA' ? 'row-factura' : 'row-cuenta';
+        $rowClass = str_starts_with($tipo, 'FACTURA') ? 'row-factura' : 'row-cuenta';
         $monto = (float) ($row['GTotal'] ?? 0);
         $pageSum += $monto;
 
