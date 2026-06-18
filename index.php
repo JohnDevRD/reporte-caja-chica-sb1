@@ -15,7 +15,7 @@ require __DIR__ . '/includes/api.php';
 $currentPage = max(1, (int) getParam('page', '1'));
 $limit       = normalizeLimit(getParam('limit'));
 
-$textFilters = ['ocr_code', 'descripcion', 'comments_factura'];
+$textFilters = ['ocr_code', 'comments_pago', 'comments_factura'];
 $hasTextFilter = false;
 foreach ($textFilters as $tf) {
     if (getParam($tf) !== null && getParam($tf) !== '') {
@@ -30,7 +30,7 @@ foreach ($textFilters as $tf) {
 if ($hasTextFilter) {
     $apiData = fetchAllApiPages([
         'ocr_code'         => '',
-        'descripcion'      => '',
+        'comments_pago'    => '',
         'comments_factura' => '',
     ]);
 } else {
@@ -94,7 +94,7 @@ if ($hasTextFilter) {
     $allRecordsForFilterDropdowns = ($dropdownData['ok'] ?? false) ? ($dropdownData['data'] ?? []) : [];
 }
 
-$uniqueDescriptions = getUniqueValues($allRecordsForFilterDropdowns, 'Descripcion');
+$uniqueDescriptions = getUniqueValues($allRecordsForFilterDropdowns, 'CommentsPago');
 $uniqueOcrCodes = getUniqueValues($allRecordsForFilterDropdowns, 'OcrCode');
 $uniqueComments = getUniqueValues($allRecordsForFilterDropdowns, 'CommentsFactura');
 

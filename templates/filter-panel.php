@@ -29,11 +29,11 @@ $collapseShow = empty($_GET) ? (count($activeFilters) > 0 ? 'show' : '') : '';
                         <h6 class="text-uppercase text-muted small fw-bold mb-0 pb-1 border-bottom">Descripción</h6>
                     </div>
                     <div class="col-md-4">
-                        <label for="descripcion" class="form-label small">Descripción del movimiento</label>
-                        <select id="descripcion" name="descripcion" class="form-select form-select-sm">
+                        <label for="comments_pago" class="form-label small">Descripción del movimiento</label>
+                        <select id="comments_pago" name="comments_pago" class="form-select form-select-sm">
                             <option value="">Todos</option>
                             <?php foreach ($uniqueDescriptions as $desc): ?>
-                                <option value="<?php echo html($desc); ?>" <?php echo getParam('descripcion') === $desc ? 'selected' : ''; ?>>
+                                <option value="<?php echo html($desc); ?>" <?php echo getParam('comments_pago') === $desc ? 'selected' : ''; ?>>
                                     <?php echo html($desc); ?>
                                 </option>
                             <?php endforeach; ?>

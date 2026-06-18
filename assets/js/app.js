@@ -85,7 +85,7 @@
 
     // Inicializar Select2 para filtros con muchos elementos
     jQuery(document).ready(function() {
-        jQuery('#descripcion').select2({
+        jQuery('#comments_pago').select2({
             placeholder: 'Selecciona una descripción...',
             allowClear: true,
             width: '100%'
@@ -97,7 +97,7 @@
             width: '100%'
         });
 
-        jQuery('#descripcion, #comments_factura').on('select2:clear', function() {
+        jQuery('#comments_pago, #comments_factura').on('select2:clear', function() {
             jQuery(this).closest('form').trigger('submit');
         });
     });

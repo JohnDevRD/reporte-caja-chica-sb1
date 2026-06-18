@@ -14,7 +14,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Font;
 
-$textFilters = ['ocr_code', 'descripcion', 'comments_factura'];
+$textFilters = ['ocr_code', 'comments_pago', 'comments_factura'];
 $hasTextFilter = false;
 foreach ($textFilters as $tf) {
     if (getParam($tf) !== null && getParam($tf) !== '') {
@@ -29,7 +29,7 @@ $total   = 0;
 if ($hasTextFilter) {
     $pageData = fetchAllApiPages([
         'ocr_code'         => '',
-        'descripcion'      => '',
+        'comments_pago'    => '',
         'comments_factura' => '',
     ]);
     if ($pageData && isset($pageData['ok']) && $pageData['ok'] === true) {
@@ -153,7 +153,7 @@ foreach ($records as $row) {
 
     $sheet->setCellValue('A' . $rowIdx, $rowIdx - 1);
     $sheet->setCellValue('B' . $rowIdx, formatDate($row['DocDate'] ?? null));
-    $sheet->setCellValue('C' . $rowIdx, $row['Descripcion'] ?? '');
+    $sheet->setCellValue('C' . $rowIdx, $row['CommentsPago'] ?? '');
     $sheet->setCellValue('D' . $rowIdx, $row['OcrCode'] ?? '');
     $sheet->setCellValue('E' . $rowIdx, $row['CommentsFactura'] ?? '');
     $sheet->setCellValue('F' . $rowIdx, $monto);

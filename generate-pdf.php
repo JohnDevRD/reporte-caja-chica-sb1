@@ -31,7 +31,7 @@ $errorMsg  = '';
 $truncated = false;
 
 // Check if textual filters are present
-$textFilters = ['ocr_code', 'descripcion', 'comments_factura'];
+$textFilters = ['ocr_code', 'comments_pago', 'comments_factura'];
 $hasTextFilter = false;
 foreach ($textFilters as $tf) {
     if (getParam($tf) !== null && getParam($tf) !== '') {
@@ -44,7 +44,7 @@ if ($hasTextFilter) {
     // Fetch ALL pages without textual filters, then apply client-side filtering.
     $apiData = fetchAllApiPages([
         'ocr_code'         => '',
-        'descripcion'      => '',
+        'comments_pago'    => '',
         'comments_factura' => '',
     ]);
     
@@ -250,7 +250,7 @@ if ($errorMsg) {
         }
     }
     $filterFields = [
-        'ocr_code' => 'Sucursal', 'descripcion' => 'Descripción',
+        'ocr_code' => 'Sucursal', 'comments_pago' => 'Descripción',
     ];
     foreach ($filterFields as $key => $label) {
         $v = getParam($key);
@@ -301,7 +301,7 @@ if ($errorMsg) {
             <tr class="' . $rowClass . '">
                 <td>' . $idx++ . '</td>
                 <td>' . formatDate($row['DocDate'] ?? null) . '</td>
-                <td>' . p($row['Descripcion'] ?? '') . '</td>
+                <td>' . p($row['CommentsPago'] ?? '') . '</td>
                 <td>' . p($row['OcrCode'] ?? '') . '</td>
                 <td>' . p($row['CommentsFactura'] ?? '') . '</td>
                 <td class="col-monto">$ ' . number_format($monto, 2, '.', ',') . '</td>

@@ -30,7 +30,7 @@
                         <tr class="<?php echo $tipo === 'FACTURA' ? 'row-factura' : 'row-cuenta'; ?>">
                             <td class="text-secondary text-center"><?php echo $rowNum++; ?></td>
                             <td class="text-center text-nowrap"><?php echo formatDate($row['DocDate'] ?? null); ?></td>
-                            <td class="text-center"><?php echo html($row['Descripcion'] ?? ''); ?></td>
+                            <td class="text-center"><?php echo html($row['CommentsPago'] ?? ''); ?></td>
                             <td class="text-center"><span class="report-badge"><?php echo html($row['OcrCode'] ?? ''); ?></span></td>
                             <td class="text-center text-truncate"><?php echo html($row['CommentsFactura'] ?? ''); ?></td>
                             <td class="text-center fw-semibold text-nowrap"><?php echo '$ ' . formatCurrency($row['GTotal'] ?? null); ?></td>

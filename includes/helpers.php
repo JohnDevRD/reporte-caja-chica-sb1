@@ -40,7 +40,7 @@ function buildQueryString(array $overrides = []): string
 {
     $fields = [
         'desde', 'hasta',
-        'ocr_code', 'descripcion', 'comments_factura',
+        'ocr_code', 'comments_pago', 'comments_factura',
         'page', 'limit'
     ];
 
@@ -71,7 +71,7 @@ function getActiveFilters(): array
         'desde'            => 'Desde',
         'hasta'            => 'Hasta',
         'ocr_code'         => 'Sucursal',
-        'descripcion'      => 'Descripción',
+        'comments_pago'    => 'Descripción',
         'comments_factura' => 'Comentarios Factura',
     ];
 
@@ -102,7 +102,7 @@ function filterRecordsCaseInsensitive(array $records): array
     // Mapeo entre nombre de filtro GET y nombre de campo en datos
     $fieldMap = [
         'ocr_code'         => 'OcrCode',
-        'descripcion'      => 'Descripcion',
+        'comments_pago'    => 'CommentsPago',
         'comments_factura' => 'CommentsFactura',
     ];
 
