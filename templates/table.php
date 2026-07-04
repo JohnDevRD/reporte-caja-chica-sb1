@@ -17,7 +17,7 @@
                     <tr>
                         <th scope="col" class="text-center" style="width: 3rem;">#</th>
                         <th scope="col" class="text-center">Fecha</th>
-                        <th scope="col" class="text-center">Descripción</th>
+                        <th scope="col" class="text-center">Categoría</th>
                         <th scope="col" class="text-center">Sucursal</th>
                         <th scope="col" class="text-center">Comentarios Factura</th>
                         <th scope="col" class="text-center">Monto</th>
@@ -30,7 +30,7 @@
                         <tr class="<?php echo str_starts_with($tipo, 'FACTURA') ? 'row-factura' : 'row-cuenta'; ?>">
                             <td class="text-secondary text-center"><?php echo $rowNum++; ?></td>
                             <td class="text-center text-nowrap"><?php echo formatDate($row['DocDate'] ?? null); ?></td>
-                            <td class="text-center"><?php echo html($row['CommentsPago'] ?? ''); ?></td>
+                            <td class="text-center"><?php echo html($row['Categoria'] ?? ''); ?></td>
                             <td class="text-center"><span class="report-badge"><?php echo html($row['OcrCode'] ?? ''); ?></span></td>
                             <td class="text-center text-truncate"><?php echo html($row['CommentsFactura'] ?? ''); ?></td>
                             <td class="text-center fw-semibold text-nowrap"><?php echo '$ ' . formatCurrency($row['GTotal'] ?? null); ?></td>

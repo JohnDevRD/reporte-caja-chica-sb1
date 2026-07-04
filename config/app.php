@@ -35,7 +35,8 @@ loadEnv(__DIR__ . '/../.env');
 
 function env(string $key, string $default = ''): string
 {
-    return $_ENV[$key] ?? getenv($key) ?: $default;
+    $value = $_ENV[$key] ?? getenv($key);
+    return ($value !== false && $value !== null) ? $value : $default;
 }
 
 define('API_BASE',          env('API_BASE', 'http://localhost:8000/api-reportes-sb1/api/v1/consultas/caja_chica/reporte.php'));

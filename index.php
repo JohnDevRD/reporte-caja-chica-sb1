@@ -15,10 +15,17 @@ require __DIR__ . '/includes/api.php';
 $currentPage = max(1, (int) getParam('page', '1'));
 $limit       = normalizeLimit(getParam('limit'));
 
-$textFilters = ['ocr_code', 'comments_pago', 'comments_factura'];
+$textFilters = ['ocr_code', 'categoria', 'comments_factura'];
 $hasTextFilter = false;
 foreach ($textFilters as $tf) {
-    if (getParam($tf) !== null && getParam($tf) !== '') {
+    // Verificar tanto si es array (multi-select) como string simple
+    $arrVal = getParamArray($tf);
+    if (!empty($arrVal)) {
+        $hasTextFilter = true;
+        break;
+    }
+    $val = getParam($tf);
+    if ($val !== null && $val !== '') {
         $hasTextFilter = true;
         break;
     }
@@ -30,7 +37,7 @@ foreach ($textFilters as $tf) {
 if ($hasTextFilter) {
     $apiData = fetchAllApiPages([
         'ocr_code'         => '',
-        'comments_pago'    => '',
+        'categoria'    => '',
         'comments_factura' => '',
     ]);
 } else {
@@ -94,7 +101,7 @@ if ($hasTextFilter) {
     $allRecordsForFilterDropdowns = ($dropdownData['ok'] ?? false) ? ($dropdownData['data'] ?? []) : [];
 }
 
-$uniqueDescriptions = getUniqueValues($allRecordsForFilterDropdowns, 'CommentsPago');
+$uniqueDescriptions = getUniqueValues($allRecordsForFilterDropdowns, 'Categoria');
 $uniqueOcrCodes = getUniqueValues($allRecordsForFilterDropdowns, 'OcrCode');
 $uniqueComments = getUniqueValues($allRecordsForFilterDropdowns, 'CommentsFactura');
 

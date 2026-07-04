@@ -5,10 +5,19 @@ declare(strict_types=1);
 function getParam(string $key, ?string $default = null): ?string
 {
     $value = $_GET[$key] ?? null;
-    if ($value === null || $value === '') {
+    if (!is_string($value) || $value === '') {
         return $default;
     }
     return trim($value);
+}
+
+function getParamArray(string $key): array
+{
+    $value = $_GET[$key] ?? [];
+    if (!is_array($value)) {
+        return [];
+    }
+    return array_values(array_filter(array_map('trim', $value), fn($v) => $v !== ''));
 }
 
 function formatDate(?string $date): string
@@ -40,15 +49,22 @@ function buildQueryString(array $overrides = []): string
 {
     $fields = [
         'desde', 'hasta',
-        'ocr_code', 'comments_pago', 'comments_factura',
+        'ocr_code', 'categoria', 'comments_factura',
         'page', 'limit'
     ];
 
     $params = [];
     foreach ($fields as $field) {
-        $value = $overrides[$field] ?? getParam($field);
-        if ($value !== null && $value !== '') {
-            $params[$field] = $value;
+        // Intentar primero como array, luego como string simple
+        $value = $overrides[$field] ?? getParamArray($field);
+
+        if (is_array($value) && !empty($value)) {
+            $params[$field] = $value; // http_build_query maneja arrays correctamente
+        } else {
+            $single = $overrides[$field] ?? getParam($field);
+            if ($single !== null && $single !== '') {
+                $params[$field] = $single;
+            }
         }
     }
 
@@ -71,18 +87,28 @@ function getActiveFilters(): array
         'desde'            => 'Desde',
         'hasta'            => 'Hasta',
         'ocr_code'         => 'Sucursal',
-        'comments_pago'    => 'Descripción',
+        'categoria'        => 'Categoría',
         'comments_factura' => 'Comentarios Factura',
     ];
 
     foreach ($filterLabels as $key => $label) {
-        $val = getParam($key);
-        if ($val !== null && $val !== '') {
-            $displayVal = $val;
+        // Intentar como array primero
+        $arrVal = getParamArray($key);
+        if (!empty($arrVal)) {
+            $displayVal = implode(', ', $arrVal);
             if (in_array($key, ['desde', 'hasta'], true)) {
-                $displayVal = formatDate($val);
+                $displayVal = implode(', ', array_map('formatDate', $arrVal));
             }
             $activeFilters[] = ['key' => $key, 'label' => $label, 'value' => $displayVal];
+        } else {
+            $val = getParam($key);
+            if ($val !== null && $val !== '') {
+                $displayVal = $val;
+                if (in_array($key, ['desde', 'hasta'], true)) {
+                    $displayVal = formatDate($val);
+                }
+                $activeFilters[] = ['key' => $key, 'label' => $label, 'value' => $displayVal];
+            }
         }
     }
 
@@ -92,8 +118,9 @@ function getActiveFilters(): array
 /**
  * Filtra registros (array de filas) aplicando filtros de texto en forma
  * case-insensitive. Para cada campo de filtro textual presente en GET,
- * realiza una búsqueda con stripos (contiene) en el valor del registro.
- * Devuelve solo los registros que cumplen con todos los filtros textuales.
+ * realiza una comparación exacta case-insensitive (strcasecmp) contra
+ * el valor del registro. Devuelve solo los registros que cumplen con
+ * todos los filtros textuales.
  * 
  * Mapea nombres de GET (snake_case) a nombres de datos (PascalCase/CamelCase).
  */
@@ -102,16 +129,23 @@ function filterRecordsCaseInsensitive(array $records): array
     // Mapeo entre nombre de filtro GET y nombre de campo en datos
     $fieldMap = [
         'ocr_code'         => 'OcrCode',
-        'comments_pago'    => 'CommentsPago',
+        'categoria'        => 'Categoria',
         'comments_factura' => 'CommentsFactura',
     ];
 
     // Construir lista de filtros no vacíos
     $filters = [];
+
     foreach ($fieldMap as $getName => $dataField) {
-        $v = getParam($getName);
-        if ($v !== null && $v !== '') {
-            $filters[$dataField] = $v;
+        // Intentar como array (multi-select)
+        $arrVal = getParamArray($getName);
+        if (!empty($arrVal)) {
+            $filters[$dataField] = $arrVal; // guarda array
+        } else {
+            $v = getParam($getName);
+            if ($v !== null && $v !== '') {
+                $filters[$dataField] = [$v]; // normalizar a array de 1 elemento
+            }
         }
     }
 
@@ -122,9 +156,17 @@ function filterRecordsCaseInsensitive(array $records): array
     $out = [];
     foreach ($records as $row) {
         $match = true;
-        foreach ($filters as $dataField => $val) {
+        foreach ($filters as $dataField => $allowedValues) {
             $hay = (string) ($row[$dataField] ?? '');
-            if (strcasecmp($hay, $val) !== 0) {
+            // Verificar si el valor del registro está dentro de los permitidos
+            $found = false;
+            foreach ($allowedValues as $allowed) {
+                if (strcasecmp($hay, $allowed) === 0) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
                 $match = false;
                 break;
             }

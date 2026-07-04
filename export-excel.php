@@ -14,10 +14,16 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Font;
 
-$textFilters = ['ocr_code', 'comments_pago', 'comments_factura'];
+$textFilters = ['ocr_code', 'categoria', 'comments_factura'];
 $hasTextFilter = false;
 foreach ($textFilters as $tf) {
-    if (getParam($tf) !== null && getParam($tf) !== '') {
+    $arrVal = getParamArray($tf);
+    if (!empty($arrVal)) {
+        $hasTextFilter = true;
+        break;
+    }
+    $val = getParam($tf);
+    if ($val !== null && $val !== '') {
         $hasTextFilter = true;
         break;
     }
@@ -25,35 +31,38 @@ foreach ($textFilters as $tf) {
 
 $records = [];
 $total   = 0;
+$error   = '';
 
 if ($hasTextFilter) {
     $pageData = fetchAllApiPages([
         'ocr_code'         => '',
-        'comments_pago'    => '',
+        'categoria'        => '',
         'comments_factura' => '',
     ]);
-    if ($pageData && isset($pageData['ok']) && $pageData['ok'] === true) {
+    if ($pageData === null) {
+        $error = 'No se pudo conectar con el servidor';
+    } elseif (isset($pageData['ok']) && $pageData['ok'] === false) {
+        $error = $pageData['error'] ?? 'Error desconocido';
+    } elseif (isset($pageData['ok']) && $pageData['ok'] === true) {
         $records = $pageData['data'] ?? [];
         $records = filterRecordsCaseInsensitive($records);
         $total = count($records);
     }
 } else {
-    $apiUrl  = buildApiUrl(['page' => '1', 'limit' => '500']);
-    $apiData = callApi($apiUrl);
-
-    if ($apiData && isset($apiData['ok']) && $apiData['ok'] === true) {
-        $records   = $apiData['data'] ?? [];
-        $total     = (int) ($apiData['total'] ?? 0);
-        $pagesTotal = (int) ($apiData['pages_total'] ?? 1);
-
-        for ($page = 2; $page <= $pagesTotal; $page++) {
-            $pageUrl  = buildApiUrl(['page' => (string) $page, 'limit' => '500']);
-            $pageData = callApi($pageUrl);
-            if ($pageData && isset($pageData['ok']) && $pageData['ok'] === true) {
-                $records = array_merge($records, $pageData['data'] ?? []);
-            }
-        }
+    $apiData = fetchAllApiPages();
+    if ($apiData === null) {
+        $error = 'No se pudo conectar con el servidor';
+    } elseif (isset($apiData['ok']) && $apiData['ok'] === false) {
+        $error = $apiData['error'] ?? 'Error desconocido';
+    } elseif (isset($apiData['ok']) && $apiData['ok'] === true) {
+        $records = $apiData['data'] ?? [];
+        $total   = $apiData['total'] ?? count($records);
     }
+}
+
+if ($error) {
+    header('Content-Type: text/plain; charset=utf-8');
+    die('Error: ' . $error);
 }
 
 $spreadsheet = new Spreadsheet();
@@ -63,7 +72,7 @@ $sheet->setTitle('Reporte Caja Chica');
 $headers = [
     'A1' => '#',
     'B1' => 'Fecha',
-    'C1' => 'Descripción',
+    'C1' => 'Categoría',
     'D1' => 'Sucursal',
     'E1' => 'Comentarios Factura',
     'F1' => 'Monto',
@@ -153,7 +162,7 @@ foreach ($records as $row) {
 
     $sheet->setCellValue('A' . $rowIdx, $rowIdx - 1);
     $sheet->setCellValue('B' . $rowIdx, formatDate($row['DocDate'] ?? null));
-    $sheet->setCellValue('C' . $rowIdx, $row['CommentsPago'] ?? '');
+    $sheet->setCellValue('C' . $rowIdx, $row['Categoria'] ?? '');
     $sheet->setCellValue('D' . $rowIdx, $row['OcrCode'] ?? '');
     $sheet->setCellValue('E' . $rowIdx, $row['CommentsFactura'] ?? '');
     $sheet->setCellValue('F' . $rowIdx, $monto);

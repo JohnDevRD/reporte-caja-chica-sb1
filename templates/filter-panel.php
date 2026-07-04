@@ -26,14 +26,17 @@ $collapseShow = empty($_GET) ? (count($activeFilters) > 0 ? 'show' : '') : '';
                     </div>
 
                     <div class="col-12 mt-3">
-                        <h6 class="text-uppercase text-muted small fw-bold mb-0 pb-1 border-bottom">Descripción</h6>
+                        <h6 class="text-uppercase text-muted small fw-bold mb-0 pb-1 border-bottom">Categoría</h6>
                     </div>
                     <div class="col-md-4">
-                        <label for="comments_pago" class="form-label small">Descripción del movimiento</label>
-                        <select id="comments_pago" name="comments_pago" class="form-select form-select-sm">
-                            <option value="">Todos</option>
-                            <?php foreach ($uniqueDescriptions as $desc): ?>
-                                <option value="<?php echo html($desc); ?>" <?php echo getParam('comments_pago') === $desc ? 'selected' : ''; ?>>
+                        <label for="categoria" class="form-label small">Categoría</label>
+                        <select id="categoria" name="categoria[]" class="form-select form-select-sm" multiple>
+                            <?php
+                            $categoriaSeleccionadas = getParamArray('categoria');
+                            foreach ($uniqueDescriptions as $desc):
+                                $selected = in_array($desc, $categoriaSeleccionadas, true) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo html($desc); ?>" <?php echo $selected; ?>>
                                     <?php echo html($desc); ?>
                                 </option>
                             <?php endforeach; ?>
@@ -45,10 +48,13 @@ $collapseShow = empty($_GET) ? (count($activeFilters) > 0 ? 'show' : '') : '';
                     </div>
                     <div class="col-md-4">
                         <label for="ocr_code" class="form-label small">Sucursal</label>
-                        <select id="ocr_code" name="ocr_code" class="form-select form-select-sm">
-                            <option value="">Todos</option>
-                            <?php foreach ($uniqueOcrCodes as $ocr): ?>
-                                <option value="<?php echo html($ocr); ?>" <?php echo getParam('ocr_code') === $ocr ? 'selected' : ''; ?>>
+                        <select id="ocr_code" name="ocr_code[]" class="form-select form-select-sm" multiple>
+                            <?php
+                            $ocrSeleccionados = getParamArray('ocr_code');
+                            foreach ($uniqueOcrCodes as $ocr):
+                                $selected = in_array($ocr, $ocrSeleccionados, true) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo html($ocr); ?>" <?php echo $selected; ?>>
                                     <?php echo html($ocr); ?>
                                 </option>
                             <?php endforeach; ?>
@@ -60,10 +66,13 @@ $collapseShow = empty($_GET) ? (count($activeFilters) > 0 ? 'show' : '') : '';
                     </div>
                     <div class="col-md-4">
                         <label for="comments_factura" class="form-label small">Comentarios Factura</label>
-                        <select id="comments_factura" name="comments_factura" class="form-select form-select-sm">
-                            <option value="">Todos</option>
-                            <?php foreach ($uniqueComments as $comment): ?>
-                                <option value="<?php echo html($comment); ?>" <?php echo getParam('comments_factura') === $comment ? 'selected' : ''; ?>>
+                        <select id="comments_factura" name="comments_factura[]" class="form-select form-select-sm" multiple>
+                            <?php
+                            $commentsSeleccionados = getParamArray('comments_factura');
+                            foreach ($uniqueComments as $comment):
+                                $selected = in_array($comment, $commentsSeleccionados, true) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo html($comment); ?>" <?php echo $selected; ?>>
                                     <?php echo html($comment); ?>
                                 </option>
                             <?php endforeach; ?>
