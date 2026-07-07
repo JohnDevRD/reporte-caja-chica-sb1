@@ -39,8 +39,5 @@
                 </tbody>
             </table>
         </div>
-        <div class="bg-light border-top px-3 py-2 d-flex justify-content-end fw-semibold small">
-            Subtotal página: <span class="text-primary ms-1">$ <?php echo formatCurrency((string) $pageSum); ?></span>
-        </div>
     <?php endif; ?>
 </div>
