@@ -128,6 +128,8 @@ foreach ($kpiRecords as $row) {
 
 ksort($sucursalTotales);
 
+$totalRegistros = count($kpiRecords);
+
 require __DIR__ . '/templates/header.php';
 require __DIR__ . '/templates/kpi-cards.php';
 require __DIR__ . '/templates/filter-panel.php';

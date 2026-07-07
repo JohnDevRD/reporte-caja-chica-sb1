@@ -22,4 +22,12 @@ declare(strict_types=1);
             </div>
         </div>
     </div>
+    <div class="col">
+        <div class="card border-0 shadow-sm h-100" style="background: #fff8f0;">
+            <div class="card-body text-center py-2 px-3">
+                <div class="small text-muted text-uppercase fw-semibold mb-1">Total Registros</div>
+                <div class="fs-5 fw-bold text-warning"><?php echo number_format($totalRegistros, 0, ',', '.'); ?></div>
+            </div>
+        </div>
+    </div>
 </div>
