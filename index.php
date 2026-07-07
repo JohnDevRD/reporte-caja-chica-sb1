@@ -105,7 +105,33 @@ $uniqueDescriptions = getUniqueValues($allRecordsForFilterDropdowns, 'Categoria'
 $uniqueOcrCodes = getUniqueValues($allRecordsForFilterDropdowns, 'OcrCode');
 $uniqueComments = getUniqueValues($allRecordsForFilterDropdowns, 'CommentsFactura');
 
+// --- KPI: montos totales por sucursal ---
+$sucursalTotales = [];
+$montoTotalGeneral = 0.0;
+$kpiRecords = [];
+
+if ($hasTextFilter) {
+    $kpiRecords = filterRecordsCaseInsensitive($data['data'] ?? []);
+} else {
+    $kpiRecords = $allRecordsForFilterDropdowns;
+}
+
+foreach ($kpiRecords as $row) {
+    $sucursal = $row['OcrCode'] ?? 'Sin sucursal';
+    $monto = (float) ($row['GTotal'] ?? 0);
+    if (!isset($sucursalTotales[$sucursal])) {
+        $sucursalTotales[$sucursal] = 0.0;
+    }
+    $sucursalTotales[$sucursal] += $monto;
+    $montoTotalGeneral += $monto;
+}
+
+ksort($sucursalTotales);
+
+$totalRegistros = count($kpiRecords);
+
 require __DIR__ . '/templates/header.php';
+require __DIR__ . '/templates/kpi-cards.php';
 require __DIR__ . '/templates/filter-panel.php';
 require __DIR__ . '/templates/active-filters.php';
 require __DIR__ . '/templates/info-bar.php';
